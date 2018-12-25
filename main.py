@@ -8,7 +8,7 @@ class PaintApp(QWidget):
         self.initUI()
     
     def initUI(self):
-        self.setWindowTitle('Paint')
+        self.setWindowTitle('Paint App')
         
         
 if __name__ == '__main__':
