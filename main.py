@@ -15,6 +15,7 @@ class App(QMainWindow, Ui_MainWindow):
 class Canvas(QWidget):
     def __init__(self):
         super().__init__()
+        
         self.setCursor(QCursor(Qt.CrossCursor))
         p = self.palette()
         p.setColor(self.backgroundRole(), Qt.white)
