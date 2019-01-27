@@ -35,6 +35,10 @@ class Canvas(QWidget):
     def mousePressEvent(self, event):
         self.path.moveTo(event.pos())
         update()
+        self.initUI()
+    
+    def initUI(self):
+        self.setWindowTitle('Paint App')
         
         
 application = QApplication(sys.argv)
