@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'project.ui'
+# Form implementation generated from reading ui file 'main.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -41,7 +41,7 @@ class Ui_MainWindow(object):
         self.canvas.setMinimumSize(QtCore.QSize(500, 500))
         self.canvas.setMaximumSize(QtCore.QSize(5000, 5000))
         self.canvas.setBaseSize(QtCore.QSize(500, 500))
-        self.canvas.setCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
+        self.canvas.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.canvas.setAutoFillBackground(True)
         self.canvas.setStyleSheet("canvas{background-color: rgb(70, 70, 50);}")
         self.canvas.setObjectName("canvas")
@@ -58,4 +58,4 @@ class Ui_MainWindow(object):
         self.brushSizeLabel.setText(_translate("MainWindow", "Current brush size:"))
         self.brushColorLabel.setText(_translate("MainWindow", "Current brush color:"))
 
-from project import Canvas
+from canvas import Canvas
