@@ -19,6 +19,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.brushColorButton.clicked.connect(self.changeBrushColor)
         self.clearButton.clicked.connect(self.clearCanvas)
         self.actionSaveAs.triggered.connect(self.saveAs)
+        self.actionOpenFile.triggered.connect(self.openFile)
+        self.brushHardSoft.clicked.connect(self.changeHardSoft)
         
     def changeBrushSize(self):
         self.canvas.pen.setWidth(self.brushSizeSlider.value())
@@ -34,7 +36,24 @@ class App(QMainWindow, Ui_MainWindow):
     def saveAs(self):
         saveAs_file = QFileDialog.getSaveFileName(None, 'Save File:', 'untitled.png', 'Images (*.png *.bmp *.jpg)')
         saveAs_ok = self.canvas.myPixmap.save(saveAs_file[0])
-        print(saveAs_ok)
+        print('save', saveAs_ok)
+        
+    def openFile(self):
+        openFile_file = QFileDialog.getOpenFileName(None, 'Open File:', '', 'Images (*.png *.bmp *.jpg)')
+        openFile_ok = self.canvas.myPixmap.load(openFile_file[0])
+        self.canvas.setPixmap(self.canvas.myPixmap)
+        self.canvas.update()
+        print('open', openFile_ok)
+        
+    def changeHardSoft(self):
+        if self.brushHardSoft.text() == 'Hard':
+            self.canvas.pen.setCapStyle(Qt.RoundCap)
+            self.canvas.pen.setJoinStyle(Qt.RoundJoin)
+            self.brushHardSoft.setText('Soft')
+        elif self.brushHardSoft.text() == 'Soft':
+            self.canvas.pen.setCapStyle(Qt.SquareCap)
+            self.canvas.pen.setJoinStyle(Qt.BevelJoin)
+            self.brushHardSoft.setText('Hard')
         
 
 if __name__ == '__main__':

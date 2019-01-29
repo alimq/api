@@ -100,6 +100,32 @@
         <string>Choose</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="brushHardSoft">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>280</y>
+         <width>61</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Hard</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="brushStyleLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>250</y>
+         <width>101</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Current brush style:</string>
+       </property>
+      </widget>
      </widget>
     </item>
     <item alignment="Qt::AlignLeft">
@@ -148,6 +174,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpenFile"/>
    <addaction name="actionSaveAs"/>
   </widget>
   <action name="actionSaveAs">
@@ -156,6 +183,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionOpenFile">
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
  </widget>
