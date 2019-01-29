@@ -54,6 +54,12 @@ class Ui_MainWindow(object):
         self.rightSpace.setObjectName("rightSpace")
         self.horizontalLayout.addWidget(self.rightSpace)
         MainWindow.setCentralWidget(self.centralwidget)
+        self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.toolBar.setObjectName("toolBar")
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.actionSaveAs = QtWidgets.QAction(MainWindow)
+        self.actionSaveAs.setObjectName("actionSaveAs")
+        self.toolBar.addAction(self.actionSaveAs)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -65,5 +71,8 @@ class Ui_MainWindow(object):
         self.brushSizeLabel.setText(_translate("MainWindow", "Current brush size:"))
         self.brushColorLabel.setText(_translate("MainWindow", "Current brush color:"))
         self.brushColorButton.setText(_translate("MainWindow", "Choose"))
+        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
+        self.actionSaveAs.setText(_translate("MainWindow", "Save As.."))
+        self.actionSaveAs.setShortcut(_translate("MainWindow", "Ctrl+Shift+S"))
 
 from canvas import Canvas
