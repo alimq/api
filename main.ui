@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>912</width>
-    <height>715</height>
+    <width>1490</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,11 +16,20 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
+     <widget class="QWidget" name="leftSpace" native="true"/>
+    </item>
+    <item alignment="Qt::AlignLeft">
      <widget class="QWidget" name="sidebar" native="true">
       <property name="minimumSize">
        <size>
-        <width>388</width>
+        <width>250</width>
         <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>250</width>
+        <height>16777215</height>
        </size>
       </property>
       <property name="autoFillBackground">
@@ -90,24 +99,24 @@
       </widget>
      </widget>
     </item>
-    <item>
+    <item alignment="Qt::AlignLeft">
      <widget class="Canvas" name="canvas" native="true">
       <property name="minimumSize">
        <size>
-        <width>500</width>
-        <height>500</height>
+        <width>600</width>
+        <height>600</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>5000</width>
-        <height>5000</height>
+        <width>600</width>
+        <height>600</height>
        </size>
       </property>
       <property name="baseSize">
        <size>
-        <width>500</width>
-        <height>500</height>
+        <width>600</width>
+        <height>600</height>
        </size>
       </property>
       <property name="cursor">
@@ -120,6 +129,9 @@
        <string notr="true">canvas{background-color: rgb(70, 70, 50);}</string>
       </property>
      </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="rightSpace" native="true"/>
     </item>
    </layout>
   </widget>

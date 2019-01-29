@@ -11,11 +11,13 @@ class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.brushSizeSlider.setMinimum(1)
+        self.brushSizeSlider.setMaximum(24)
+        self.brushSizeSlider.setTickInterval(1)
         self.brushSizeSlider.valueChanged.connect(self.changeBrushSize)
         
     def changeBrushSize(self):
         self.canvas.pen.setWidth(self.brushSizeSlider.value())
-        print(self.canvas.pen.width)
 
 if __name__ == '__main__':
     application = QApplication(sys.argv)
