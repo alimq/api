@@ -34,12 +34,12 @@ class Ui_MainWindow(object):
         self.brushSizeLabel = QtWidgets.QLabel(self.sidebar)
         self.brushSizeLabel.setGeometry(QtCore.QRect(20, 90, 101, 16))
         self.brushSizeLabel.setObjectName("brushSizeLabel")
-        self.brushColorDial = QtWidgets.QDial(self.sidebar)
-        self.brushColorDial.setGeometry(QtCore.QRect(20, 180, 50, 64))
-        self.brushColorDial.setObjectName("brushColorDial")
         self.brushColorLabel = QtWidgets.QLabel(self.sidebar)
         self.brushColorLabel.setGeometry(QtCore.QRect(20, 160, 101, 16))
         self.brushColorLabel.setObjectName("brushColorLabel")
+        self.brushColorButton = QtWidgets.QPushButton(self.sidebar)
+        self.brushColorButton.setGeometry(QtCore.QRect(20, 190, 91, 41))
+        self.brushColorButton.setObjectName("brushColorButton")
         self.horizontalLayout.addWidget(self.sidebar, 0, QtCore.Qt.AlignLeft)
         self.canvas = Canvas(self.centralwidget)
         self.canvas.setMinimumSize(QtCore.QSize(600, 600))
@@ -64,5 +64,6 @@ class Ui_MainWindow(object):
         self.clearButton.setText(_translate("MainWindow", "Clear canvas"))
         self.brushSizeLabel.setText(_translate("MainWindow", "Current brush size:"))
         self.brushColorLabel.setText(_translate("MainWindow", "Current brush color:"))
+        self.brushColorButton.setText(_translate("MainWindow", "Choose"))
 
 from canvas import Canvas

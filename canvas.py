@@ -12,7 +12,7 @@ class Canvas(QLabel):
         self.setPalette(p)
         self.myPixmap = QPixmap(600, 600)
         self.painter = QPainter(self.myPixmap)
-        self.pen = QPen(Qt.black)
+        self.pen = QPen()
         self.painter.setPen(self.pen)
         self.painter.fillRect(0, 0, 600, 600, Qt.white)
         self.setPixmap(self.myPixmap)

@@ -74,16 +74,6 @@
         <string>Current brush size:</string>
        </property>
       </widget>
-      <widget class="QDial" name="brushColorDial">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>180</y>
-         <width>50</width>
-         <height>64</height>
-        </rect>
-       </property>
-      </widget>
       <widget class="QLabel" name="brushColorLabel">
        <property name="geometry">
         <rect>
@@ -95,6 +85,19 @@
        </property>
        <property name="text">
         <string>Current brush color:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="brushColorButton">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>190</y>
+         <width>91</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Choose</string>
        </property>
       </widget>
      </widget>
