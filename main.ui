@@ -18,7 +18,7 @@
     <item>
      <widget class="QWidget" name="leftSpace" native="true"/>
     </item>
-    <item alignment="Qt::AlignLeft">
+    <item>
      <widget class="QWidget" name="sidebar" native="true">
       <property name="minimumSize">
        <size>
@@ -48,7 +48,7 @@
         <string>Clear canvas</string>
        </property>
       </widget>
-      <widget class="QSlider" name="brushSizeSlider">
+      <widget class="QSlider" name="penSizeSlider">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -61,20 +61,20 @@
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
-      <widget class="QLabel" name="brushSizeLabel">
+      <widget class="QLabel" name="penSizeLabel">
        <property name="geometry">
         <rect>
          <x>20</x>
          <y>90</y>
-         <width>101</width>
+         <width>111</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>Current brush size:</string>
+        <string>Current pen size(1):</string>
        </property>
       </widget>
-      <widget class="QLabel" name="brushColorLabel">
+      <widget class="QLabel" name="penColorLabel">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -84,10 +84,10 @@
         </rect>
        </property>
        <property name="text">
-        <string>Current brush color:</string>
+        <string>Current pen color:</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="brushColorButton">
+      <widget class="QPushButton" name="penColorButton">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -100,7 +100,7 @@
         <string>Choose</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="brushHardSoft">
+      <widget class="QPushButton" name="penHardSoft">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -113,7 +113,7 @@
         <string>Hard</string>
        </property>
       </widget>
-      <widget class="QLabel" name="brushStyleLabel">
+      <widget class="QLabel" name="penStyleLabel">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -123,7 +123,46 @@
         </rect>
        </property>
        <property name="text">
-        <string>Current brush style:</string>
+        <string>Current pen style:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="penEraserButton">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>30</y>
+         <width>91</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Pen</string>
+       </property>
+      </widget>
+      <widget class="QSlider" name="eraserSizeSlider">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>380</y>
+         <width>160</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="eraserSizeLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>350</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Current eraser size(2):</string>
        </property>
       </widget>
      </widget>
