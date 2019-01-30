@@ -3,6 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+
 class Canvas(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -15,6 +16,10 @@ class Canvas(QLabel):
         self.painter.fillRect(0, 0, 600, 600, Qt.white)
         self.setPixmap(self.currentPixmap)
         self.pen = QPen()
+        
+        self.brush = QBrush(Qt.black)
+        self.brush.setStyle(Qt.SolidPattern)        
+        
         self.last = None   
         
         self.eraser = QPen()
@@ -26,7 +31,9 @@ class Canvas(QLabel):
 
     def mouseMoveEvent(self, event):
         if self.last:
-            self.painter.setPen(self.currentPen)
+            self.pen.setBrush(self.brush)             
+            
+            self.painter.setPen(self.currentPen)           
             self.painter.drawLine(self.last, event.pos())
             
             self.last = event.pos()

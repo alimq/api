@@ -5,29 +5,33 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from ui import Ui_MainWindow
-from os.path import expanduser
 
 
 class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowTitle('YandexLyceum Paint Project')
         self.penSizeSlider.setMinimum(1)
         self.penSizeSlider.setMaximum(24)
         self.penSizeSlider.setTickInterval(1)
         self.penSizeSlider.valueChanged.connect(self.changePenSize)
         
+        self.currentFile = None
+        
         self.penColorButton.clicked.connect(self.changePenColor)
         self.clearButton.clicked.connect(self.clearCanvas)
         self.actionSaveAs.triggered.connect(self.saveAs)
-        self.actionOpenFile.triggered.connect(self.openFile)
         self.penHardSoft.clicked.connect(self.changeHardSoft)
         self.penEraserButton.clicked.connect(self.changePenEraser)
         
         self.eraserSizeSlider.setMinimum(2)
         self.eraserSizeSlider.setMaximum(48)
         self.eraserSizeSlider.setTickInterval(2)
-        self.eraserSizeSlider.valueChanged.connect(self.changeEraserSize)        
+        self.eraserSizeSlider.valueChanged.connect(self.changeEraserSize)     
+        
+        self.penTypeCombo.currentTextChanged.connect(self.changePenType)
+        self.actionSave.triggered.connect(self.saveFile)
         
         
     def changePenSize(self):
@@ -38,22 +42,30 @@ class App(QMainWindow, Ui_MainWindow):
     def changePenColor(self):
         color = QColorDialog().getColor()
         self.canvas.pen.setColor(color)
+        self.canvas.brush.setColor(color)
         
     def clearCanvas(self):
         self.canvas.painter.fillRect(0, 0, 600, 600, Qt.white)
         self.canvas.setPixmap(self.canvas.currentPixmap)
         
     def saveAs(self):
-        saveAs_file = QFileDialog.getSaveFileName(None, 'Save File:', 'untitled.png', 'Images (*.png *.bmp *.jpg)')
+        saveAs_file = QFileDialog.getSaveFileName(None, 'Save File:', 'yandexlyceum.png', 'Images (*.png *.bmp *.jpg)')
         saveAs_ok = self.canvas.currentPixmap.save(saveAs_file[0])
-        print('save', saveAs_ok)
+        if saveAs_ok:
+            self.currentFile = saveAs_file[0]
+            print('Successfully saved into', self.currentFile)
+        else:
+            print('Fail!')
         
-    def openFile(self):
-        openFile_file = QFileDialog.getOpenFileName(None, 'Open File:', '', 'Images (*.png *.bmp *.jpg)')
-        openFile_ok = self.canvas.currentPixmap.load(openFile_file[0])
-        self.canvas.setPixmap(self.canvas.currentPixmap)
-        self.canvas.update()
-        print('open', openFile_ok)
+    def saveFile(self):
+        if self.currentFile:
+            saveAs_ok = self.canvas.currentPixmap.save(self.currentFile)
+            if saveAs_ok:
+                print('Successfully saved', self.currentFile)
+            else:
+                print('Fail!')
+        else:
+            self.saveAs()
         
     def changeHardSoft(self):
         if self.penHardSoft.text() == 'Hard':
@@ -77,6 +89,37 @@ class App(QMainWindow, Ui_MainWindow):
         self.canvas.eraser.setWidth(self.eraserSizeSlider.value())
         newLabel = 'Current eraser size(' + str(self.eraserSizeSlider.value()) + '):'
         self.eraserSizeLabel.setText(newLabel)        
+        
+    def changePenType(self):
+        val = self.penTypeCombo.currentText()
+        if val == 'Default':
+            self.canvas.brush.setStyle(Qt.SolidPattern)
+        elif val == 'Dense 1':
+            self.canvas.brush.setStyle(Qt.Dense1Pattern)
+        elif val == 'Dense 2':
+            self.canvas.brush.setStyle(Qt.Dense2Pattern)
+        elif val == 'Dense 3':
+            self.canvas.brush.setStyle(Qt.Dense3Pattern)
+        elif val == 'Dense 4':
+            self.canvas.brush.setStyle(Qt.Dense4Pattern)
+        elif val == 'Dense 5':
+            self.canvas.brush.setStyle(Qt.Dense5Pattern)
+        elif val == 'Dense 6':
+            self.canvas.brush.setStyle(Qt.Dense6Pattern)
+        elif val == 'Dense 7':
+            self.canvas.brush.setStyle(Qt.Dense7Pattern)       
+        elif val == 'Horizontal':
+            self.canvas.brush.setStyle(Qt.HorPattern)
+        elif val == 'Vertical':
+            self.canvas.brush.setStyle(Qt.VerPattern)
+        elif val == 'Cross':
+            self.canvas.brush.setStyle(Qt.CrossPattern)
+        elif val == 'BDiagonal':
+            self.canvas.brush.setStyle(Qt.BDiagPattern)
+        elif val == 'FDiagonal':
+            self.canvas.brush.setStyle(Qt.FDiagPattern)         
+        elif val == 'DiagonalCross':
+            self.canvas.brush.setStyle(Qt.DiagCrossPattern)    
         
 
 if __name__ == '__main__':

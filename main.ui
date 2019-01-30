@@ -168,6 +168,99 @@
         <string>Current eraser size(2):</string>
        </property>
       </widget>
+      <widget class="QComboBox" name="penTypeCombo">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>450</y>
+         <width>161</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>Default</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dense 1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dense 2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dense 3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dense 4</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dense 5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dense 6</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Dense 7</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Horizontal</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Vertical</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Cross</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BDiagonal</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>FDiagonal</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>DiagonalCross</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QLabel" name="penTypeLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>420</y>
+         <width>101</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Current pen type:</string>
+       </property>
+      </widget>
      </widget>
     </item>
     <item alignment="Qt::AlignLeft">
@@ -216,7 +309,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionOpenFile"/>
+   <addaction name="actionSave"/>
    <addaction name="actionSaveAs"/>
   </widget>
   <action name="actionSaveAs">
@@ -227,15 +320,15 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="actionOpenFile">
+  <action name="actionSave">
    <property name="text">
-    <string>Open</string>
+    <string>Save</string>
    </property>
    <property name="toolTip">
-    <string>Open File</string>
+    <string>Save File</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+O</string>
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>
