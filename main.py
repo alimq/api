@@ -61,6 +61,17 @@ def user_lost():
     pygame.display.flip()
     running = False
     pygame.time.delay(1500)
+    
+def user_won():
+    global running
+    screen.fill(pygame.Color('white'))
+    font = pygame.font.Font(None, 50)
+    label = 'You won! Score: ' + str(user_score)
+    text = font.render(label, 1, pygame.Color('darkgreen'))
+    screen.blit(text, (250, 250))    
+    pygame.display.flip()
+    running = False
+    pygame.time.delay(1500)
 
 class Vertical:
     def __init__(self, x, y):
@@ -105,10 +116,12 @@ class Obstacle:
         self.sprite.rect.y = y
         all_verticals.append(Vertical(self.x - 4, self.y + 5))
         all_verticals.append(Vertical(self.x + 101, self.y + 5))
-        all_horizontals.append(Horizontal(self.x, self.y + 80))        
+        all_horizontals.append(Horizontal(self.x, self.y + 80))      
+        self.fallen = 0
         
     def move(self):
         self.sprite.rect.x = self.x - distance 
+        
         
 class Trap:
     def __init__(self, x, y):
@@ -238,6 +251,8 @@ class Drop:
             
             user_score += 100
             update_user_score()
+            if (user_score >= 500):
+                user_won()
         self.sprite.rect.x = self.x - distance 
         
         
@@ -271,12 +286,33 @@ fps = 60
 clock = pygame.time.Clock()
 hero = Hero('hero.png')
 all_obstacles.append(Obstacle(100, 520))
-all_obstacles.append(Obstacle(150, 440))
-all_obstacles.append(Obstacle(200, 360))
-all_obstacles.append(Obstacle(250, 280))
-all_obstacles.append(Obstacle(400, 520))
-all_traps.append(Trap(500, 570))
-all_obstacles.append(Obstacle(1000, 520))
+all_obstacles.append(Obstacle(200, 520))
+all_obstacles.append(Obstacle(300, 520))
+all_obstacles.append(Obstacle(400, 440))
+all_traps.append(Trap(450, 570))
+all_traps.append(Trap(525, 570))
+all_traps.append(Trap(600, 570))
+all_obstacles.append(Obstacle(570, 360))
+all_obstacles.append(Obstacle(700, 280))
+all_obstacles.append(Obstacle(640, 470))
+all_obstacles.append(Obstacle(760, 520))
+all_obstacles.append(Obstacle(890, 510))
+all_obstacles.append(Obstacle(1090, 495))
+all_traps.append(Trap(1190, 570))
+all_traps.append(Trap(1265, 570))
+all_traps.append(Trap(1340, 570))
+all_obstacles.append(Obstacle(1220, 410))
+all_obstacles.append(Obstacle(1330, 410))
+all_obstacles.append(Obstacle(1600, 315))
+all_obstacles.append(Obstacle(1580, 315))
+all_traps.append(Trap(1450, 480))
+all_obstacles.append(Obstacle(1450, 510))
+all_obstacles.append(Obstacle(1600, 520))
+all_obstacles.append(Obstacle(1790, 430))
+all_obstacles.append(Obstacle(1930, 480))
+all_obstacles.append(Obstacle(2150, 440))
+all_obstacles.append(Obstacle(2350, 440))
+
 
 background = load_image('background.jpg')
 
