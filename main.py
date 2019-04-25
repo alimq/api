@@ -36,6 +36,7 @@ bomb_sprites = pygame.sprite.Group()
 drop_sprites = pygame.sprite.Group()
 trap_sprites = pygame.sprite.Group()
 distance = -370
+flag = False
 
 all_obstacles = []
 all_verticals = []
@@ -60,7 +61,7 @@ def user_lost():
     screen.blit(text, (250, 250))    
     pygame.display.flip()
     running = False
-    pygame.time.delay(1500)
+    pygame.time.delay(100000)
     
 def user_won():
     global running
@@ -71,7 +72,7 @@ def user_won():
     screen.blit(text, (250, 250))    
     pygame.display.flip()
     running = False
-    pygame.time.delay(1500)
+    pygame.time.delay(100000)
 
 class Vertical:
     def __init__(self, x, y):
@@ -152,6 +153,20 @@ def update_obstacles():
         bomb.move()    
     for trap in all_traps:
         trap.move()
+        
+def update_obstacles2():
+    for obstacle in all_obstacles:
+        obstacle.move()
+    for vertical in all_verticals:
+        vertical.move()  
+    for horizontal in all_horizontals:
+        horizontal.move()
+    for drop in all_drops:
+        drop.move2()
+    for bomb in all_bombs:
+        bomb.move2()    
+    for trap in all_traps:
+        trap.move()
 
 class Hero:
     def __init__(self, src):
@@ -211,12 +226,12 @@ class Hero:
         global distance
         if self.right == True:
             distance += 4
-            update_obstacles()          
+            update_obstacles2()       
             if pygame.sprite.spritecollideany(self.sprite, vertical_sprites):
                 distance -= 4        
         if self.left == True:
             distance -= 4   
-            update_obstacles()            
+            update_obstacles2()            
             if pygame.sprite.spritecollideany(self.sprite, vertical_sprites):
                 distance += 4           
         if self.jump or pygame.sprite.spritecollideany(self.sprite, obstacle_sprites) or self.sprite.rect.y >= 520:
@@ -255,6 +270,21 @@ class Drop:
                 user_won()
         self.sprite.rect.x = self.x - distance 
         
+    def move2(self):
+        global user_score
+        if (self.sprite.rect.y > 600 or pygame.sprite.spritecollideany(self.sprite, obstacle_sprites)):
+            self.sprite.kill()
+            self.dropped = True
+        if pygame.sprite.spritecollideany(self.sprite, hero_sprites) and not self.dropped:
+            self.sprite.kill()
+            self.dropped = True
+            
+            user_score += 100
+            update_user_score()
+            if (user_score >= 500):
+                user_won()
+        self.sprite.rect.x = self.x - distance     
+        
         
 class Bomb:
     def __init__(self):
@@ -280,6 +310,17 @@ class Bomb:
             user_lost()
             return
         self.sprite.rect.x = self.x - distance 
+        
+    def move2(self):
+        if (self.sprite.rect.y > 600 or pygame.sprite.spritecollideany(self.sprite, obstacle_sprites)):
+            self.sprite.kill()
+            self.dropped = True
+        if pygame.sprite.spritecollideany(self.sprite, hero_sprites) and not self.dropped:
+            self.sprite.kill()
+            self.dropped = True
+            user_lost()
+            return
+        self.sprite.rect.x = self.x - distance     
         
 
 fps = 60
@@ -311,7 +352,134 @@ all_obstacles.append(Obstacle(1600, 520))
 all_obstacles.append(Obstacle(1790, 430))
 all_obstacles.append(Obstacle(1930, 480))
 all_obstacles.append(Obstacle(2150, 440))
-all_obstacles.append(Obstacle(2350, 440))
+all_obstacles.append(Obstacle(2450, 520))
+all_obstacles.append(Obstacle(2550, 520))
+all_obstacles.append(Obstacle(2650, 520))
+all_obstacles.append(Obstacle(2750, 440))
+all_traps.append(Trap(2800, 570))
+all_traps.append(Trap(2875, 570))
+all_traps.append(Trap(2950, 570))
+all_obstacles.append(Obstacle(2920, 360))
+all_obstacles.append(Obstacle(3050, 280))
+all_obstacles.append(Obstacle(2990, 470))
+all_obstacles.append(Obstacle(3110, 520))
+all_obstacles.append(Obstacle(3240, 510))
+all_obstacles.append(Obstacle(3340, 495))
+all_traps.append(Trap(3440, 570))
+all_traps.append(Trap(3515, 570))
+all_traps.append(Trap(3590, 570))
+all_obstacles.append(Obstacle(3470, 410))
+all_obstacles.append(Obstacle(3580, 410))
+all_obstacles.append(Obstacle(3850, 315))
+all_obstacles.append(Obstacle(3830, 315))
+all_traps.append(Trap(3700, 480))
+all_obstacles.append(Obstacle(3700, 510))
+all_obstacles.append(Obstacle(3850, 520))
+all_obstacles.append(Obstacle(4040, 430))
+all_obstacles.append(Obstacle(4180, 480))
+all_obstacles.append(Obstacle(4400, 440))
+all_obstacles.append(Obstacle(4600, 440))
+all_traps.append(Trap(4700, 570))
+all_traps.append(Trap(4800, 570))
+all_traps.append(Trap(4900, 570))
+
+
+if pygame.sprite.spritecollideany(hero.sprite, drop_sprites):
+    all_obstacles.append(Obstacle(100, 520))
+    all_obstacles.append(Obstacle(200, 520))
+    all_obstacles.append(Obstacle(300, 520))
+    all_obstacles.append(Obstacle(400, 440))
+    all_traps.append(Trap(450, 570))
+    all_traps.append(Trap(525, 570))
+    all_traps.append(Trap(600, 570))
+    all_obstacles.append(Obstacle(570, 360))
+    all_obstacles.append(Obstacle(700, 280))
+    all_obstacles.append(Obstacle(640, 470))
+    all_obstacles.append(Obstacle(760, 520))
+    all_obstacles.append(Obstacle(890, 510))
+    all_obstacles.append(Obstacle(1090, 495))
+    all_traps.append(Trap(1190, 570))
+    all_traps.append(Trap(1265, 570))
+    all_traps.append(Trap(1340, 570))
+    all_obstacles.append(Obstacle(1220, 410))
+    all_obstacles.append(Obstacle(1330, 410))
+    all_obstacles.append(Obstacle(1600, 315))
+    all_obstacles.append(Obstacle(1580, 315))
+    all_traps.append(Trap(1450, 480))
+    all_obstacles.append(Obstacle(1450, 510))
+    all_obstacles.append(Obstacle(1600, 520))
+    all_obstacles.append(Obstacle(1790, 430))
+    all_obstacles.append(Obstacle(1930, 480))
+    all_obstacles.append(Obstacle(2150, 440))
+    all_obstacles.append(Obstacle(2450, 520))
+    all_obstacles.append(Obstacle(2550, 520))
+    all_obstacles.append(Obstacle(2650, 520))
+    all_obstacles.append(Obstacle(2750, 440))
+    all_traps.append(Trap(2800, 570))
+    all_traps.append(Trap(2875, 570))
+    all_traps.append(Trap(2950, 570))
+    all_obstacles.append(Obstacle(2920, 360))
+    all_obstacles.append(Obstacle(3050, 280))
+    all_obstacles.append(Obstacle(2990, 470))
+    all_obstacles.append(Obstacle(3110, 520))
+    all_obstacles.append(Obstacle(3240, 510))
+    all_obstacles.append(Obstacle(3340, 495))
+    all_traps.append(Trap(3440, 570))
+    all_traps.append(Trap(3515, 570))
+    all_traps.append(Trap(3590, 570))
+    all_obstacles.append(Obstacle(3470, 410))
+    all_obstacles.append(Obstacle(3580, 410))
+    all_obstacles.append(Obstacle(3850, 315))
+    all_obstacles.append(Obstacle(3830, 315))
+    all_traps.append(Trap(3700, 480))
+    all_obstacles.append(Obstacle(3700, 510))
+    all_obstacles.append(Obstacle(3850, 520))
+    all_obstacles.append(Obstacle(4040, 430))
+    all_obstacles.append(Obstacle(4180, 480))
+    all_obstacles.append(Obstacle(4400, 440))
+    all_obstacles.append(Obstacle(4600, 440))
+    all_traps.append(Trap(4700, 570))
+    all_traps.append(Trap(4800, 570))
+    all_traps.append(Trap(4900, 570))
+    all_obstacles.append(Obstacle(1580, 315))
+    all_traps.append(Trap(1450, 480))
+    all_obstacles.append(Obstacle(1450, 510))
+    all_obstacles.append(Obstacle(1600, 520))
+    all_obstacles.append(Obstacle(1790, 430))
+    all_obstacles.append(Obstacle(1930, 480))
+    all_obstacles.append(Obstacle(2150, 440))
+    all_obstacles.append(Obstacle(2450, 520))
+    all_obstacles.append(Obstacle(2550, 520))
+    all_obstacles.append(Obstacle(2650, 520))
+    all_obstacles.append(Obstacle(2750, 440))
+    all_traps.append(Trap(2800, 570))
+    all_traps.append(Trap(2875, 570))
+    all_traps.append(Trap(2950, 570))
+    all_obstacles.append(Obstacle(2920, 360))
+    all_obstacles.append(Obstacle(3050, 280))
+    all_obstacles.append(Obstacle(2990, 470))
+    all_obstacles.append(Obstacle(3110, 520))
+    all_obstacles.append(Obstacle(3240, 510))
+    all_obstacles.append(Obstacle(3340, 495))
+    all_traps.append(Trap(3440, 570))
+    all_traps.append(Trap(3515, 570))
+    all_traps.append(Trap(3590, 570))
+    all_obstacles.append(Obstacle(3470, 410))
+    all_obstacles.append(Obstacle(3580, 410))
+    all_obstacles.append(Obstacle(3850, 315))
+    all_obstacles.append(Obstacle(3830, 315))
+    all_traps.append(Trap(3700, 480))
+    all_obstacles.append(Obstacle(3700, 510))
+    all_obstacles.append(Obstacle(3850, 520))
+    all_obstacles.append(Obstacle(4040, 430))
+    all_obstacles.append(Obstacle(4180, 480))
+    all_obstacles.append(Obstacle(4400, 440))
+    all_obstacles.append(Obstacle(4600, 440))
+    all_traps.append(Trap(4700, 570))
+    all_traps.append(Trap(4800, 570))
+    all_traps.append(Trap(4900, 570))      
+
+
 
 
 background = load_image('background.jpg')
@@ -320,11 +488,12 @@ while running:
     screen.blit(background, (0, 0))
     update_user_score()
     hero.move()
-    if random.randint(1, 240) == 1:
+    if random.randint(1, 270) == 1:
         all_drops.append(Drop())
-    if random.randint(1, 150) == 1:
+    if random.randint(1, 100) == 1:
         all_bombs.append(Bomb())    
-    update_obstacles()  
+    update_obstacles()
+    update_obstacles2()
     all_sprites.draw(screen)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
