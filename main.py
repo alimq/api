@@ -1,506 +1,155 @@
-import pygame
-import os
+# -*- coding: utf-8 -*-
+import telebot
 import random
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error as message:
-        print('Cannot load image:', name)
-        raise SystemExit(message)
-    image = image.convert_alpha()
+cities = ["moscow.jpg", "nursultan.jpg", "london.jpg", "pekin.jpg", "berlin.jpg", "monaco.jpg", "paris.jpg", "san-francisco.jpg", "nursultan2.jpg"]
+names = ["Москва", "Нурсултан", "Лондон", "Пекин", "Берлин", "Монако", "Париж", "Сан-Франциско", "Нурсултан"]
+username = ""
+asking_for_name = False
+y = 0
 
-    if colorkey is not None:
-        if colorkey is -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
-    return image
+score = 0
+d = {"moscow.jpg": "Москва",
+     "nursultan.jpg": "Нурсултан",
+     "london.jpg": "Лондон",
+     "pekin.jpg": "Пекин",
+     "berlin.jpg": "Берлин",
+     "monaco.jpg": "Монако",
+     "paris.jpg": "Париж",
+     "san-francisco.jpg": "Сан-Франциско",
+     "nursultan2.jpg": "Нурсултан"
+     }
 
-running = True
-pygame.init()
-size = w, h = 800, 600
-screen = pygame.display.set_mode(size)
-keys = {32: 'jump',
-        274: 'down',
-        275: 'right',
-        276: 'left'}
+l = {"Москва": "moscow.jpg",
+     "Нурсултан": "nursultan.jpg",
+     "Лондон": "london.jpg",
+     "Пекин": "pekin.jpg",
+     "Берлин": "berlin.jpg",
+     "Монако": "monaco.jpg",
+     "Париж": "paris.jpg",
+     "Сан-Франциско": "san-francisco.jpg"
+     }
 
-user_score = 0
-all_sprites = pygame.sprite.Group()
-obstacle_sprites = pygame.sprite.Group()
-vertical_sprites = pygame.sprite.Group()
-horizontal_sprites = pygame.sprite.Group()
-hero_sprites = pygame.sprite.Group()
-bomb_sprites = pygame.sprite.Group()
-drop_sprites = pygame.sprite.Group()
-trap_sprites = pygame.sprite.Group()
-distance = -370
-flag = False
+running = False
+showing = False
+answer = ""
+bot = telebot.TeleBot('826527038:AAHKyzEnrQd40qgrPxdjeuk1xTubZ03nt_g');
 
-all_obstacles = []
-all_verticals = []
-all_horizontals = []
-all_drops = []
-all_bombs = []
-all_traps = []
+@bot.message_handler(commands=['age'])
+def get_age(message):
+    global age;
+    while age == 0:
+        try:
+            age = int(message.text)
+        except Exception:
+            bot.send_message(message.from_user.id, 'Цифрами, пожалуйста')
+    keyboard = types.InlineKeyboardMarkup()
+    key_yes = types.InlineKeyboardButton(text='Да', callback_data='yes')
+    keyboard.add(key_yes)
+    key_no= types.InlineKeyboardButton(text='Нет', callback_data='no')
+    keyboard.add(key_no)
+    question = 'Тебе '+str(age)+' лет, тебя зовут '+name+' '+surname+'?'
+    bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
 
-def update_user_score():
-    global user_score
-    font = pygame.font.Font(None, 22)
-    label = 'Score: ' + str(user_score)
-    text = font.render(label, 1, pygame.Color('darkgreen'))
-    screen.blit(text, (25, 30))
+@bot.message_handler(commands=['help'])
+def help(message):
+    global username, asking_for_name
+    if not username:
+        bot.send_message(message.from_user.id, "Можете представиться? Я с незнакомцами не общаюсь.")
+        tmp = "Как вас зовут?"
+        bot.send_message(message.from_user.id, tmp)
+        asking_for_name = True
+        return
+    bot.send_message(message.from_user.id, "Доступные команды:\n/help - помощь\n/start - начать игру\n/stop - закончить игру\n/show - показать города\n")
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    global username, asking_for_name, showing
+    showing = False
+    if not username:
+        bot.send_message(message.from_user.id, "Можете представиться? Я с незнакомцами не общаюсь.")
+        tmp = "Как вас зовут?"
+        bot.send_message(message.from_user.id, tmp)
+        asking_for_name = True
+        return
+    global running, cities, answer, y
+    running = True
+    bot.send_message(message.from_user.id, "Я показываю вам фотографию, вы должны назвать город. Поехали!")
+    bot.send_photo(message.from_user.id, open(cities[y], 'rb'))
+    answer = d[cities[y]]
+    if y < len(cities) - 1:
+        y += 1
+    else:
+        y = 0    
     
-def user_lost():
-    global running
-    screen.fill(pygame.Color('white'))
-    font = pygame.font.Font(None, 50)
-    label = 'You lost! Score: ' + str(user_score)
-    text = font.render(label, 1, pygame.Color('red'))
-    screen.blit(text, (250, 250))    
-    pygame.display.flip()
+@bot.message_handler(commands=['stop'])
+def stop(message):
+    global username, asking_for_name
+    if not username:
+        bot.send_message(message.from_user.id, "Можете представиться? Я с незнакомцами не общаюсь.")
+        tmp = "Как вас зовут?"
+        bot.send_message(message.from_user.id, tmp)
+        asking_for_name = True
+        return
+    global running, score, showing
+    tmp = username + ", пожалуйста, не спамьте командой /stop"
+    if running:
+        tmp = "Игра закончена. Вы смогли набрать " + str(score) + " очков!"
     running = False
-    pygame.time.delay(100000)
-    
-def user_won():
-    global running
-    screen.fill(pygame.Color('white'))
-    font = pygame.font.Font(None, 50)
-    label = 'You won! Score: ' + str(user_score)
-    text = font.render(label, 1, pygame.Color('darkgreen'))
-    screen.blit(text, (250, 250))    
-    pygame.display.flip()
+    if showing:
+        tmp = "Кажется, вы узнали все что вам нужно."
+    showing = False
+    bot.send_message(message.from_user.id, tmp)
+
+@bot.message_handler(commands=['show'])
+def show(message):
+    global username, asking_for_name, running
     running = False
-    pygame.time.delay(100000)
+    if not username:
+        bot.send_message(message.from_user.id, "Можете представиться? Я с незнакомцами не общаюсь.")
+        tmp = "Как вас зовут?"
+        bot.send_message(message.from_user.id, tmp)
+        asking_for_name = True
+        return
+    global showing
+    tmp = "Назовите город, и я покажу вам, как он выглядит!"
+    bot.send_message(message.from_user.id, tmp)
+    showing = True
 
-class Vertical:
-    def __init__(self, x, y):
-        self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = load_image('vertical.png')
-        self.sprite.rect = self.sprite.image.get_rect()
-        all_sprites.add(self.sprite)
-        vertical_sprites.add(self.sprite)
-        self.x = x
-        self.y = y
-        self.sprite.rect.x = x
-        self.sprite.rect.y = y 
-        
-    def move(self):
-        self.sprite.rect.x = self.x - distance   
-        
-class Horizontal:
-    def __init__(self, x, y):
-        self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = load_image('horizontal.png')
-        self.sprite.rect = self.sprite.image.get_rect()
-        all_sprites.add(self.sprite)
-        horizontal_sprites.add(self.sprite)
-        self.x = x
-        self.y = y
-        self.sprite.rect.x = x
-        self.sprite.rect.y = y 
-        
-    def move(self):
-        self.sprite.rect.x = self.x - distance   
-
-class Obstacle:
-    def __init__(self, x, y):
-        self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = load_image('obstacle.png')
-        self.sprite.rect = self.sprite.image.get_rect()
-        all_sprites.add(self.sprite)
-        obstacle_sprites.add(self.sprite)
-        self.x = x
-        self.y = y
-        self.sprite.rect.x = x
-        self.sprite.rect.y = y
-        all_verticals.append(Vertical(self.x - 4, self.y + 5))
-        all_verticals.append(Vertical(self.x + 101, self.y + 5))
-        all_horizontals.append(Horizontal(self.x, self.y + 80))      
-        self.fallen = 0
-        
-    def move(self):
-        self.sprite.rect.x = self.x - distance 
-        
-        
-class Trap:
-    def __init__(self, x, y):
-        self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = load_image('trap.png')
-        self.sprite.rect = self.sprite.image.get_rect()
-        all_sprites.add(self.sprite)
-        trap_sprites.add(self.sprite)
-        self.x = x
-        self.y = y
-        self.sprite.rect.x = x
-        self.sprite.rect.y = y
-        all_horizontals.append(Horizontal(self.x, self.y + 80))        
-        
-    def move(self):
-        self.sprite.rect.x = self.x - distance     
-
-def update_obstacles():
-    for obstacle in all_obstacles:
-        obstacle.move()
-    for vertical in all_verticals:
-        vertical.move()  
-    for horizontal in all_horizontals:
-        horizontal.move()
-    for drop in all_drops:
-        drop.move()
-    for bomb in all_bombs:
-        bomb.move()    
-    for trap in all_traps:
-        trap.move()
-        
-def update_obstacles2():
-    for obstacle in all_obstacles:
-        obstacle.move()
-    for vertical in all_verticals:
-        vertical.move()  
-    for horizontal in all_horizontals:
-        horizontal.move()
-    for drop in all_drops:
-        drop.move2()
-    for bomb in all_bombs:
-        bomb.move2()    
-    for trap in all_traps:
-        trap.move()
-
-class Hero:
-    def __init__(self, src):
-        self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = load_image(src)
-        self.sprite.rect = self.sprite.image.get_rect()
-        all_sprites.add(self.sprite)
-        hero_sprites.add(self.sprite)
-        self.sprite.rect.x = 370
-        self.sprite.rect.y = 520
-        self.jump = False
-        self.right = False
-        self.left = False
-        self.fall = False
-        self.jumping_order = [-15, -14, -13, -12, -10, -8, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 8, 10, 12, 13, 14, 15]
-        self.jumping_index = 0
-        
-    def on_keydown(self, key):
-        direction = keys.get(key, '')
-        if direction == 'jump':
-            self.jump = True
-        elif direction == 'right':
-            self.right = True
-        elif direction == 'left':
-            self.left = True
-            
-    def on_keyup(self, key):
-        direction = keys.get(key, '')
-        if direction == 'right':
-            self.right = False
-        elif direction == 'left':
-            self.left = False
-            
-    def move(self):
-        if pygame.sprite.spritecollideany(self.sprite, trap_sprites):
-            user_lost()
-            return
-        
-        if self.sprite.rect.y > 520:
-            self.sprite.rect.y = 520
-            self.fall = False
-            self.jump = False
-        if self.jump == True:
-            if self.jumping_index >= len(self.jumping_order):
-                self.jumping_index = 0
-                self.jump = False
-                return
-            self.sprite.rect.y += self.jumping_order[self.jumping_index]
-            self.jumping_index += 1
-            if pygame.sprite.spritecollideany(self.sprite, horizontal_sprites):
-                self.jumping_index -= 1
-                self.sprite.rect.y -= self.jumping_order[self.jumping_index]
-                self.jump = False                    
-            if pygame.sprite.spritecollideany(self.sprite, obstacle_sprites):
-                self.jumping_index = 0
-                self.jump = False        
-        global distance
-        if self.right == True:
-            distance += 4
-            update_obstacles2()       
-            if pygame.sprite.spritecollideany(self.sprite, vertical_sprites):
-                distance -= 4        
-        if self.left == True:
-            distance -= 4   
-            update_obstacles2()            
-            if pygame.sprite.spritecollideany(self.sprite, vertical_sprites):
-                distance += 4           
-        if self.jump or pygame.sprite.spritecollideany(self.sprite, obstacle_sprites) or self.sprite.rect.y >= 520:
-            self.fall = False
+@bot.message_handler(func=lambda x: True)
+def get_text_messages(message):
+    global running, cities, answer, showing, username, asking_for_name, score, y
+    if not username and not asking_for_name:
+        tmp = "Как вас зовут?"
+        bot.send_message(message.from_user.id, tmp)
+        asking_for_name = True
+        return
+    elif not username:
+        username = message.text
+        tmp = "Приятно познакомиться, " + username + ". Я бот, с которым ты можешь поиграть в 'Города'!"
+        bot.send_message(message.from_user.id, tmp)
+        asking_for_name = False
+    elif not running and not showing:
+        bot.send_message(message.from_user.id, "Не знаю такой команды!")
+    elif running:
+        if message.text == answer:
+            score += 1
+            tmp = "Верно! " + username + ", вы ответили правильно уже на " + str(score) + " вопросов!"
+            bot.send_message(message.from_user.id, tmp)
         else:
-            self.fall = True
-        if self.fall:
-            self.sprite.rect.y += 8
-            
-class Drop:
-    def __init__(self):
-        self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = load_image('drop.png')
-        self.sprite.rect = self.sprite.image.get_rect()
-        all_sprites.add(self.sprite)
-        drop_sprites.add(self.sprite)
-        self.x = random.randint(distance, distance + 800)
-        self.y = 0
-        self.sprite.rect.x = self.x
-        self.sprite.rect.y = self.y    
-        self.dropped = False
+            tmp = 'Неверно! Ответ: ' + answer
+            bot.send_message(message.from_user.id, tmp)
+        if y < len(cities) - 1:
+            y += 1
+        else:
+            y = 0
+        bot.send_photo(message.from_user.id, open(cities[y], 'rb'))
+        answer = d[cities[y]]        
+    elif showing:
+        if message.text in names:
+            bot.send_photo(message.from_user.id, open(l[message.text], 'rb'))
+        else:
+            tmp = "Такого города я не знаю :(\n" + "Возможно вы хотите сыграть со мной в игру, " + username + "?"
+            bot.send_message(message.from_user.id, tmp)
         
-    def move(self):
-        global user_score
-        self.sprite.rect.y += random.randint(1, 5)
-        if (self.sprite.rect.y > 600 or pygame.sprite.spritecollideany(self.sprite, obstacle_sprites)):
-            self.sprite.kill()
-            self.dropped = True
-        if pygame.sprite.spritecollideany(self.sprite, hero_sprites) and not self.dropped:
-            self.sprite.kill()
-            self.dropped = True
-            
-            user_score += 100
-            update_user_score()
-            if (user_score >= 500):
-                user_won()
-        self.sprite.rect.x = self.x - distance 
-        
-    def move2(self):
-        global user_score
-        if (self.sprite.rect.y > 600 or pygame.sprite.spritecollideany(self.sprite, obstacle_sprites)):
-            self.sprite.kill()
-            self.dropped = True
-        if pygame.sprite.spritecollideany(self.sprite, hero_sprites) and not self.dropped:
-            self.sprite.kill()
-            self.dropped = True
-            
-            user_score += 100
-            update_user_score()
-            if (user_score >= 500):
-                user_won()
-        self.sprite.rect.x = self.x - distance     
-        
-        
-class Bomb:
-    def __init__(self):
-        self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = load_image('bomb.png')
-        self.sprite.rect = self.sprite.image.get_rect()
-        all_sprites.add(self.sprite)
-        bomb_sprites.add(self.sprite)
-        self.x = random.randint(distance, distance + 800)
-        self.y = 0
-        self.sprite.rect.x = self.x
-        self.sprite.rect.y = self.y    
-        self.dropped = False
-        
-    def move(self):
-        self.sprite.rect.y += random.randint(2, 7)
-        if (self.sprite.rect.y > 600 or pygame.sprite.spritecollideany(self.sprite, obstacle_sprites)):
-            self.sprite.kill()
-            self.dropped = True
-        if pygame.sprite.spritecollideany(self.sprite, hero_sprites) and not self.dropped:
-            self.sprite.kill()
-            self.dropped = True
-            user_lost()
-            return
-        self.sprite.rect.x = self.x - distance 
-        
-    def move2(self):
-        if (self.sprite.rect.y > 600 or pygame.sprite.spritecollideany(self.sprite, obstacle_sprites)):
-            self.sprite.kill()
-            self.dropped = True
-        if pygame.sprite.spritecollideany(self.sprite, hero_sprites) and not self.dropped:
-            self.sprite.kill()
-            self.dropped = True
-            user_lost()
-            return
-        self.sprite.rect.x = self.x - distance     
-        
-
-fps = 60
-clock = pygame.time.Clock()
-hero = Hero('hero.png')
-all_obstacles.append(Obstacle(100, 520))
-all_obstacles.append(Obstacle(200, 520))
-all_obstacles.append(Obstacle(300, 520))
-all_obstacles.append(Obstacle(400, 440))
-all_traps.append(Trap(450, 570))
-all_traps.append(Trap(525, 570))
-all_traps.append(Trap(600, 570))
-all_obstacles.append(Obstacle(570, 360))
-all_obstacles.append(Obstacle(700, 280))
-all_obstacles.append(Obstacle(640, 470))
-all_obstacles.append(Obstacle(760, 520))
-all_obstacles.append(Obstacle(890, 510))
-all_obstacles.append(Obstacle(1090, 495))
-all_traps.append(Trap(1190, 570))
-all_traps.append(Trap(1265, 570))
-all_traps.append(Trap(1340, 570))
-all_obstacles.append(Obstacle(1220, 410))
-all_obstacles.append(Obstacle(1330, 410))
-all_obstacles.append(Obstacle(1600, 315))
-all_obstacles.append(Obstacle(1580, 315))
-all_traps.append(Trap(1450, 480))
-all_obstacles.append(Obstacle(1450, 510))
-all_obstacles.append(Obstacle(1600, 520))
-all_obstacles.append(Obstacle(1790, 430))
-all_obstacles.append(Obstacle(1930, 480))
-all_obstacles.append(Obstacle(2150, 440))
-all_obstacles.append(Obstacle(2450, 520))
-all_obstacles.append(Obstacle(2550, 520))
-all_obstacles.append(Obstacle(2650, 520))
-all_obstacles.append(Obstacle(2750, 440))
-all_traps.append(Trap(2800, 570))
-all_traps.append(Trap(2875, 570))
-all_traps.append(Trap(2950, 570))
-all_obstacles.append(Obstacle(2920, 360))
-all_obstacles.append(Obstacle(3050, 280))
-all_obstacles.append(Obstacle(2990, 470))
-all_obstacles.append(Obstacle(3110, 520))
-all_obstacles.append(Obstacle(3240, 510))
-all_obstacles.append(Obstacle(3340, 495))
-all_traps.append(Trap(3440, 570))
-all_traps.append(Trap(3515, 570))
-all_traps.append(Trap(3590, 570))
-all_obstacles.append(Obstacle(3470, 410))
-all_obstacles.append(Obstacle(3580, 410))
-all_obstacles.append(Obstacle(3850, 315))
-all_obstacles.append(Obstacle(3830, 315))
-all_traps.append(Trap(3700, 480))
-all_obstacles.append(Obstacle(3700, 510))
-all_obstacles.append(Obstacle(3850, 520))
-all_obstacles.append(Obstacle(4040, 430))
-all_obstacles.append(Obstacle(4180, 480))
-all_obstacles.append(Obstacle(4400, 440))
-all_obstacles.append(Obstacle(4600, 440))
-all_traps.append(Trap(4700, 570))
-all_traps.append(Trap(4800, 570))
-all_traps.append(Trap(4900, 570))
-
-
-if pygame.sprite.spritecollideany(hero.sprite, drop_sprites):
-    all_obstacles.append(Obstacle(100, 520))
-    all_obstacles.append(Obstacle(200, 520))
-    all_obstacles.append(Obstacle(300, 520))
-    all_obstacles.append(Obstacle(400, 440))
-    all_traps.append(Trap(450, 570))
-    all_traps.append(Trap(525, 570))
-    all_traps.append(Trap(600, 570))
-    all_obstacles.append(Obstacle(570, 360))
-    all_obstacles.append(Obstacle(700, 280))
-    all_obstacles.append(Obstacle(640, 470))
-    all_obstacles.append(Obstacle(760, 520))
-    all_obstacles.append(Obstacle(890, 510))
-    all_obstacles.append(Obstacle(1090, 495))
-    all_traps.append(Trap(1190, 570))
-    all_traps.append(Trap(1265, 570))
-    all_traps.append(Trap(1340, 570))
-    all_obstacles.append(Obstacle(1220, 410))
-    all_obstacles.append(Obstacle(1330, 410))
-    all_obstacles.append(Obstacle(1600, 315))
-    all_obstacles.append(Obstacle(1580, 315))
-    all_traps.append(Trap(1450, 480))
-    all_obstacles.append(Obstacle(1450, 510))
-    all_obstacles.append(Obstacle(1600, 520))
-    all_obstacles.append(Obstacle(1790, 430))
-    all_obstacles.append(Obstacle(1930, 480))
-    all_obstacles.append(Obstacle(2150, 440))
-    all_obstacles.append(Obstacle(2450, 520))
-    all_obstacles.append(Obstacle(2550, 520))
-    all_obstacles.append(Obstacle(2650, 520))
-    all_obstacles.append(Obstacle(2750, 440))
-    all_traps.append(Trap(2800, 570))
-    all_traps.append(Trap(2875, 570))
-    all_traps.append(Trap(2950, 570))
-    all_obstacles.append(Obstacle(2920, 360))
-    all_obstacles.append(Obstacle(3050, 280))
-    all_obstacles.append(Obstacle(2990, 470))
-    all_obstacles.append(Obstacle(3110, 520))
-    all_obstacles.append(Obstacle(3240, 510))
-    all_obstacles.append(Obstacle(3340, 495))
-    all_traps.append(Trap(3440, 570))
-    all_traps.append(Trap(3515, 570))
-    all_traps.append(Trap(3590, 570))
-    all_obstacles.append(Obstacle(3470, 410))
-    all_obstacles.append(Obstacle(3580, 410))
-    all_obstacles.append(Obstacle(3850, 315))
-    all_obstacles.append(Obstacle(3830, 315))
-    all_traps.append(Trap(3700, 480))
-    all_obstacles.append(Obstacle(3700, 510))
-    all_obstacles.append(Obstacle(3850, 520))
-    all_obstacles.append(Obstacle(4040, 430))
-    all_obstacles.append(Obstacle(4180, 480))
-    all_obstacles.append(Obstacle(4400, 440))
-    all_obstacles.append(Obstacle(4600, 440))
-    all_traps.append(Trap(4700, 570))
-    all_traps.append(Trap(4800, 570))
-    all_traps.append(Trap(4900, 570))
-    all_obstacles.append(Obstacle(1580, 315))
-    all_traps.append(Trap(1450, 480))
-    all_obstacles.append(Obstacle(1450, 510))
-    all_obstacles.append(Obstacle(1600, 520))
-    all_obstacles.append(Obstacle(1790, 430))
-    all_obstacles.append(Obstacle(1930, 480))
-    all_obstacles.append(Obstacle(2150, 440))
-    all_obstacles.append(Obstacle(2450, 520))
-    all_obstacles.append(Obstacle(2550, 520))
-    all_obstacles.append(Obstacle(2650, 520))
-    all_obstacles.append(Obstacle(2750, 440))
-    all_traps.append(Trap(2800, 570))
-    all_traps.append(Trap(2875, 570))
-    all_traps.append(Trap(2950, 570))
-    all_obstacles.append(Obstacle(2920, 360))
-    all_obstacles.append(Obstacle(3050, 280))
-    all_obstacles.append(Obstacle(2990, 470))
-    all_obstacles.append(Obstacle(3110, 520))
-    all_obstacles.append(Obstacle(3240, 510))
-    all_obstacles.append(Obstacle(3340, 495))
-    all_traps.append(Trap(3440, 570))
-    all_traps.append(Trap(3515, 570))
-    all_traps.append(Trap(3590, 570))
-    all_obstacles.append(Obstacle(3470, 410))
-    all_obstacles.append(Obstacle(3580, 410))
-    all_obstacles.append(Obstacle(3850, 315))
-    all_obstacles.append(Obstacle(3830, 315))
-    all_traps.append(Trap(3700, 480))
-    all_obstacles.append(Obstacle(3700, 510))
-    all_obstacles.append(Obstacle(3850, 520))
-    all_obstacles.append(Obstacle(4040, 430))
-    all_obstacles.append(Obstacle(4180, 480))
-    all_obstacles.append(Obstacle(4400, 440))
-    all_obstacles.append(Obstacle(4600, 440))
-    all_traps.append(Trap(4700, 570))
-    all_traps.append(Trap(4800, 570))
-    all_traps.append(Trap(4900, 570))      
-
-
-
-
-background = load_image('background.jpg')
-
-while running:
-    screen.blit(background, (0, 0))
-    update_user_score()
-    hero.move()
-    if random.randint(1, 270) == 1:
-        all_drops.append(Drop())
-    if random.randint(1, 100) == 1:
-        all_bombs.append(Bomb())    
-    update_obstacles()
-    update_obstacles2()
-    all_sprites.draw(screen)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN:
-            hero.on_keydown(event.key)
-        if event.type == pygame.KEYUP:
-            hero.on_keyup(event.key)        
-    pygame.display.flip()
-    clock.tick(fps)
+bot.polling(none_stop=True, interval=0)
